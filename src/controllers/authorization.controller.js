@@ -34,7 +34,12 @@ export async function signIn(req,res){
 export async function signOut(req,res){
     try{
         const user = res.locals.user;
-        res.send(user);
+        const result = await db.query(`DELETE FROM sessions WHERE id= $1`,[user.idSessao]);
+        if(result.rowCount === 1){
+            res.sendStatus(204);
+        }else{
+            return res.sendStatus(404);
+        }
     }catch(err){
         return res.status(500).send(err.message);
     }
