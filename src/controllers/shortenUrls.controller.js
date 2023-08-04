@@ -17,3 +17,29 @@ export async function registerUrl(req,res){
         return res.status(500).send(err.message);
     }
 }
+
+export async function getUrlObjectbyId(req,res){
+    try{
+        const id = req.params.id;
+        const search = await db.query('SELECT * FROM urls WHERE id = $1;',[id]);
+        if(search.rowCount === 0 ) return res.sendStatus(404);
+        const resp = {id,shortUrl:search.rows[0].shorterUrl,url:search.rows[0].url };
+        return res.status(200).send(resp);
+    }catch(err){
+        return res.status(500).send(err.message);
+    }
+}
+
+export async function acessUrlbyId(req,res){
+    try{
+        const shortUrl = req.params.shortUrl;
+        const search = await db.query('SELECT * FROM urls WHERE "shorterUrl" = $1;',[shortUrl]);
+        if(search.rowCount === 0 ) return res.sendStatus(404);
+        const {id, url, visitCount} = search.rows[0];
+        const views = Number(visitCount) + 1;
+        await db.query(`UPDATE urls SET "visitCount" = $1 WHERE id = $2;`,[views,id]);
+        return res.redirect(url);    
+    }catch(err){
+        return res.status(500).send(err.message);
+    }
+}
