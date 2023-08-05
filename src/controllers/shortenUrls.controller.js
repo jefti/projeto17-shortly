@@ -9,7 +9,7 @@ export async function registerUrl(req,res){
         const insert = await db.query(`INSERT INTO urls ("userId", url, "shorterUrl") VALUES ($1,$2,$3) RETURNING id;`, [id, url,uniqueId]);
         if(insert.rowCount === 1){
             const id_url = insert.rows[0].id;
-            return res.send({id: id_url, shortUrl:uniqueId});
+            return res.status(201).send({id: id_url, shortUrl:uniqueId});
         } else{
             return res.sendStatus(500);
         }
