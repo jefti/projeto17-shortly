@@ -52,7 +52,7 @@ export async function deleteUrl(req,res){
         if(validate.rowCount === 0) return res.sendStatus(404);
         if(validate.rows[0].userId !== user.id) return res.sendStatus(401);
         await db.query(`DELETE FROM urls WHERE id = $1`, [id_url]);
-        return res.send(204);
+        return res.sendStatus(204);
     }catch(err){
         return res.status(500).send(err.message);
     }
